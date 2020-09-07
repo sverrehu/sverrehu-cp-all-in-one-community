@@ -7,6 +7,9 @@ services:
     container_name: zookeeper
     ports:
       - "2181:2181"
+    volumes:
+      - ./volumes/zookeeper/etc/kafka:/etc/kafka
+      - ./volumes/zookeeper/etc/zookeeper:/etc/zookeeper
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
@@ -21,6 +24,8 @@ services:
       - "29092:29092"
       - "9092:9092"
       - "9101:9101"
+    volumes:
+      - ./volumes/broker/etc/kafka:/etc/kafka
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
@@ -41,6 +46,8 @@ services:
       - broker
     ports:
       - "8081:8081"
+    volumes:
+      - ./volumes/schema-registry/etc/schema-registry:/etc/schema-registry
     environment:
       SCHEMA_REGISTRY_HOST_NAME: schema-registry
       SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: 'zookeeper:2181'
@@ -55,6 +62,8 @@ services:
       - schema-registry
     ports:
       - "8083:8083"
+    volumes:
+      - ./volumes/connect/etc/kafka:/etc/kafka
     environment:
       CONNECT_BOOTSTRAP_SERVERS: 'broker:29092'
       CONNECT_REST_ADVERTISED_HOST_NAME: connect
@@ -138,6 +147,8 @@ services:
       - 8082:8082
     hostname: rest-proxy
     container_name: rest-proxy
+    volumes:
+      - ./volumes/rest-proxy/etc/kafka-rest:/etc/kafka-rest
     environment:
       KAFKA_REST_HOST_NAME: rest-proxy
       KAFKA_REST_BOOTSTRAP_SERVERS: 'broker:29092'
