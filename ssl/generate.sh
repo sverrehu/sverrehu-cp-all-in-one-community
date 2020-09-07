@@ -13,6 +13,7 @@ if test \! -f ca.crt
 then
     echo "No ca.crt found. Generating one."
     openssl req -new -x509 -days 3650 -keyout ca.key -out ca.crt -subj "/C=NO/CN=CA" -passout "pass:$PASS"
+    keytool -import -file ca.crt -keystore truststore -alias ca -storepass "$PASS" -noprompt
     for USER in $USERS
     do
 	rm -f "$USER.p12"
