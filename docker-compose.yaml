@@ -8,6 +8,7 @@ services:
     ports:
       - "2181:2181"
     volumes:
+      - ./ssl:/etc/kafka-ssl
       - ./volumes/zookeeper/etc/kafka:/etc/kafka
       - ./volumes/zookeeper/etc/zookeeper:/etc/zookeeper
     environment:
@@ -25,6 +26,7 @@ services:
       - "9092:9092"
       - "9101:9101"
     volumes:
+      - ./ssl:/etc/kafka-ssl
       - ./volumes/broker/etc/kafka:/etc/kafka
     environment:
       KAFKA_BROKER_ID: 1
@@ -47,6 +49,7 @@ services:
     ports:
       - "8081:8081"
     volumes:
+      - ./ssl:/etc/kafka-ssl
       - ./volumes/schema-registry/etc/schema-registry:/etc/schema-registry
     environment:
       SCHEMA_REGISTRY_HOST_NAME: schema-registry
@@ -63,6 +66,7 @@ services:
     ports:
       - "8083:8083"
     volumes:
+      - ./ssl:/etc/kafka-ssl
       - ./volumes/connect/etc/kafka:/etc/kafka
     environment:
       CONNECT_BOOTSTRAP_SERVERS: 'broker:29092'
@@ -94,6 +98,8 @@ services:
       - connect
     ports:
       - "8088:8088"
+    volumes:
+      - ./ssl:/etc/kafka-ssl
     environment:
       KSQL_CONFIG_DIR: "/etc/ksql"
       KSQL_BOOTSTRAP_SERVERS: "broker:29092"
@@ -114,6 +120,8 @@ services:
       - ksqldb-server
     entrypoint: /bin/sh
     tty: true
+    volumes:
+      - ./ssl:/etc/kafka-ssl
 
   ksql-datagen:
     image: confluentinc/ksqldb-examples:5.5.1
@@ -131,6 +139,8 @@ services:
                        echo Waiting a few seconds for topic creation to finish... && \
                        sleep 11 && \
                        tail -f /dev/null'"
+    volumes:
+      - ./ssl:/etc/kafka-ssl
     environment:
       KSQL_CONFIG_DIR: "/etc/ksql"
       STREAMS_BOOTSTRAP_SERVERS: broker:29092
@@ -148,6 +158,7 @@ services:
     hostname: rest-proxy
     container_name: rest-proxy
     volumes:
+      - ./ssl:/etc/kafka-ssl
       - ./volumes/rest-proxy/etc/kafka-rest:/etc/kafka-rest
     environment:
       KAFKA_REST_HOST_NAME: rest-proxy
