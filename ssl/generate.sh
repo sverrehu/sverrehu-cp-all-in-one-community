@@ -22,5 +22,6 @@ fi
 for USER in $USERS
 do
     echo "Generating for $USER"
-    keytool -genkey -keystore "$USER.p12" -deststoretype pkcs12 -storepass "$PASS" -alias localhost -dname CN=localhost -keyalg RSA -validity 365 -ext san=dns:localhost -keypass "$PASS"
+    keytool -genkey -keystore "$USER.p12" -deststoretype pkcs12 -storepass "$PASS" -alias "$USER" -dname CN="$USER" -keyalg RSA -validity 365 -keypass "$PASS"
+    keytool -certreq -keystore "$USER.p12" -alias "$USER" -file "$USER.unsigned.crt" -storepass "$PASS"
 done
