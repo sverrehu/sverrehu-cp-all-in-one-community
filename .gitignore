@@ -2,3 +2,4 @@
 ssl/*.crt
 ssl/*.key
 ssl/*.p12
+**/secrets/

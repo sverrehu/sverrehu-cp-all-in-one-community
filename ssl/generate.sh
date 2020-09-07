@@ -19,6 +19,12 @@ then
 	rm -f "$USER.p12"
     done
 fi
+for USER in $USERS
+do
+    mkdir -p ../volumes/$USER/etc/kafka/secrets/ >/dev/null 2>&1
+    echo "$PASS" > ../volumes/$USER/etc/kafka/secrets/password.txt
+    cp truststore.p12 ../volumes/$USER/etc/kafka/secrets/
+done
 
 for USER in $USERS
 do
@@ -32,4 +38,5 @@ do
 	keytool -import -file "$USER.crt" -keystore "$USER.p12" -alias "$USER" -storepass "$PASS" -noprompt
 	rm ca.srl "$USER.crt" "$USER.unsigned.crt"
     fi
+    cp "$USER.p12" ../volumes/$USER/etc/kafka/secrets/
 done
