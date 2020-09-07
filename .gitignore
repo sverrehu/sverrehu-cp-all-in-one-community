@@ -1,1 +1,4 @@
 **/*~
+ssl/*.crt
+ssl/*.key
+ssl/*.p12
