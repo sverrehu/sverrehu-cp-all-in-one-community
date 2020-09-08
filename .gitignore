@@ -1,5 +1,8 @@
 **/*~
+*.iml
+.idea
 ssl/*.crt
 ssl/*.key
 ssl/*.p12
+ssl/password.txt
 **/secrets/

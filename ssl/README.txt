@@ -1,3 +1,1 @@
-Based on stuff found here:
-https://jaceklaskowski.gitbooks.io/apache-kafka/content/kafka-demo-securing-communication-between-clients-and-brokers.html
-
+Run ./generate.sh to generate keystores and truststores.

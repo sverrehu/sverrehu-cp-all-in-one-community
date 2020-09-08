@@ -8,7 +8,7 @@ services:
     ports:
       - "2181:2181"
     volumes:
-      - ./ssl:/etc/kafka-ssl
+      - ./ssl:/etc/kafka/secrets
       - ./volumes/zookeeper/etc/kafka:/etc/kafka
       - ./volumes/zookeeper/etc/zookeeper:/etc/zookeeper
     environment:
@@ -27,22 +27,21 @@ services:
       - "9093:9093"
       - "9101:9101"
     volumes:
-      - ./ssl:/etc/kafka-ssl
+      - ./ssl:/etc/kafka/secrets
       - ./volumes/broker/etc/kafka:/etc/kafka
-      - ./volumes/broker/etc/kafka/secrets:/etc/kafka/secrets
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT,SSL:SSL
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker:29092,PLAINTEXT_HOST://localhost:9092,SSL://localhost:9093
 
-      # File names are relative to /etc/kafka/secrets
-      KAFKA_SSL_KEYSTORE_FILENAME: broker.p12
+      # SHH: File names are relative to /etc/kafka/secrets
+      KAFKA_SSL_KEYSTORE_FILENAME: broker.keystore.p12
       KAFKA_SSL_KEYSTORE_CREDENTIALS: password.txt
       KAFKA_SSL_KEY_CREDENTIALS: password.txt
-      KAFKA_SSL_TRUSTSTORE_FILENAME: truststore.p12
+      KAFKA_SSL_TRUSTSTORE_FILENAME: broker.truststore.p12
       KAFKA_SSL_TRUSTSTORE_CREDENTIALS: password.txt
-      
+
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
@@ -59,7 +58,7 @@ services:
     ports:
       - "8081:8081"
     volumes:
-      - ./ssl:/etc/kafka-ssl
+      - ./ssl:/etc/kafka/secrets
       - ./volumes/schema-registry/etc/schema-registry:/etc/schema-registry
     environment:
       SCHEMA_REGISTRY_HOST_NAME: schema-registry
@@ -76,7 +75,7 @@ services:
     ports:
       - "8083:8083"
     volumes:
-      - ./ssl:/etc/kafka-ssl
+      - ./ssl:/etc/kafka/secrets
       - ./volumes/connect/etc/kafka:/etc/kafka
     environment:
       CONNECT_BOOTSTRAP_SERVERS: 'broker:29092'
@@ -109,7 +108,7 @@ services:
     ports:
       - "8088:8088"
     volumes:
-      - ./ssl:/etc/kafka-ssl
+      - ./ssl:/etc/kafka/secrets
     environment:
       KSQL_CONFIG_DIR: "/etc/ksql"
       KSQL_BOOTSTRAP_SERVERS: "broker:29092"
@@ -131,7 +130,7 @@ services:
     entrypoint: /bin/sh
     tty: true
     volumes:
-      - ./ssl:/etc/kafka-ssl
+      - ./ssl:/etc/kafka/secrets
 
   ksql-datagen:
     image: confluentinc/ksqldb-examples:5.5.1
@@ -168,7 +167,7 @@ services:
     hostname: rest-proxy
     container_name: rest-proxy
     volumes:
-      - ./ssl:/etc/kafka-ssl
+      - ./ssl:/etc/kafka/secrets
       - ./volumes/rest-proxy/etc/kafka-rest:/etc/kafka-rest
     environment:
       KAFKA_REST_HOST_NAME: rest-proxy
