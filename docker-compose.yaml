@@ -20,17 +20,15 @@ services:
     depends_on:
       - zookeeper
     ports:
-      - "29092:29092"
-      - "9092:9092"
+      - "29093:29093"
       - "9093:9093" # SHH: Added SSL port
-      - "9101:9101"
     volumes:
       - ./ssl:/etc/kafka/secrets
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CLEAR:PLAINTEXT,INTERNAL_SSL:SSL,SSL:SSL #SHH: Added SSL
-      KAFKA_ADVERTISED_LISTENERS: SSL://broker:9093,INTERNAL_SSL://broker:29092,CLEAR://localhost:9092 # SHH: Added SSL listeners
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL_SSL:SSL,SSL:SSL #SHH: Added SSL
+      KAFKA_ADVERTISED_LISTENERS: SSL://broker:9093,INTERNAL_SSL://broker:29093 # SHH: Added SSL listeners
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL_SSL
 
       # SHH: Setup SSL. File names are relative to /etc/kafka/secrets

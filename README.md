@@ -46,15 +46,43 @@ All containers get the `./ssl` directory mounted as `/etc/kafka/secrets`.
 
 ### zookeeper
 
-No changes.
+No changes yet.
 
 ### broker
 
+* Added SSL exposed ports, and removed non-SSL
+```
+    ports:
+      - "29093:29093"
+      - "9093:9093"
+```
 
+* Added SSL listeners, and removed non-SSL
+```
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL_SSL:SSL,SSL:SSL
+      KAFKA_ADVERTISED_LISTENERS: SSL://broker:9093,INTERNAL_SSL://broker:29093
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL_SSL
+```
+
+* Set up SSL, including required SSL for clients (filenames are relative to `/etc/kafka/secrets`)
+```
+      KAFKA_SSL_KEYSTORE_FILENAME: broker.keystore.p12
+      KAFKA_SSL_KEYSTORE_CREDENTIALS: password.txt
+      KAFKA_SSL_KEY_CREDENTIALS: password.txt
+      KAFKA_SSL_TRUSTSTORE_FILENAME: broker.truststore.p12
+      KAFKA_SSL_TRUSTSTORE_CREDENTIALS: password.txt
+      KAFKA_SSL_CLIENT_AUTH: required
+```
+
+* Set up ACL for authorization, including super users to circumvent it
+```
+      KAFKA_AUTHORIZER_CLASS_NAME: kafka.security.authorizer.AclAuthorizer
+      KAFKA_SUPER_USERS: User:CN=broker;User:CN=superuser
+```
 
 ### schema-registry
 
-No changes. Not tested.
+No changes yet.
 
 ### connect
 
@@ -76,3 +104,12 @@ No changes. Not tested.
 
 No changes. Not tested.
 
+## Example commands
+
+### Add ACL, and list ACLs
+```
+$ docker-compose exec broker bash
+root@broker:/# cd /etc/kafka/secrets/
+root@broker:/etc/kafka/secrets# kafka-acls --bootstrap-server broker:9093 --command-config superuser.properties --add --topic test --group test --allow-principal User:CN=client
+root@broker:/etc/kafka/secrets# kafka-acls --bootstrap-server broker:9093 --command-config superuser.properties --list
+```
