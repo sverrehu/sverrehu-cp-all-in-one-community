@@ -7,8 +7,8 @@ then
 fi
 
 PASS="foobar"
-USERS="broker client superuser"
-BAD_USER="bad"
+USERS="broker client superuser" # Will be signed by trusted CA
+BAD_USER="bad"                  # Certificate that is not signed by the trusted CA
 KEYSTORE_EXT="keystore.p12"
 TRUSTSTORE_EXT="truststore.p12"
 
@@ -35,22 +35,24 @@ do
 	openssl x509 -req -CA ca.crt -CAkey ca.key -in "$USER.unsigned.crt" -out "$USER.crt" -days 3650 -CAcreateserial -passin "pass:$PASS"
 	keytool -import -file ca.crt -keystore "$USER.$KEYSTORE_EXT" -alias ca -storepass "$PASS" -noprompt
 	keytool -import -file "$USER.crt" -keystore "$USER.$KEYSTORE_EXT" -alias "$USER" -storepass "$PASS" -noprompt
-	cp "$TRUSTSTORE_EXT" "$USER.$TRUSTSTORE_EXT"
 	rm ca.srl "$USER.crt" "$USER.unsigned.crt"
     fi
 done
 
-cat <<EOT > superuser.properties
-security.protocol=SSL
-ssl.keystore.location=superuser.$KEYSTORE_EXT
-ssl.keystore.password=$PASS
-ssl.key.password=$PASS
-ssl.truststore.location=superuser.$TRUSTSTORE_EXT
-ssl.truststore.password=$PASS
-EOT
-
 if test \! -f "$BAD_USER.$KEYSTORE_EXT"
 then
   keytool -genkey -keystore "$BAD_USER.$KEYSTORE_EXT" -deststoretype pkcs12 -storepass "$PASS" -alias "$BAD_USER" -dname CN="$BAD_USER" -keyalg RSA -validity 365 -keypass "$PASS"
-  cp "$TRUSTSTORE_EXT" "$BAD_USER.$TRUSTSTORE_EXT"
 fi
+
+for USER in $USERS $BAD_USER
+do
+  cp "$TRUSTSTORE_EXT" "$USER.$TRUSTSTORE_EXT"
+  cat <<EOT > "$USER.properties"
+security.protocol=SSL
+ssl.keystore.location=$USER.$KEYSTORE_EXT
+ssl.keystore.password=$PASS
+ssl.key.password=$PASS
+ssl.truststore.location=$USER.$TRUSTSTORE_EXT
+ssl.truststore.password=$PASS
+EOT
+done
