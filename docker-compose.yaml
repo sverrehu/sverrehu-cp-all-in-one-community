@@ -32,8 +32,9 @@ services:
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT,SSL:SSL #SHH: Added SSL
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker:29092,PLAINTEXT_HOST://localhost:9092,SSL://broker:9093 # SHH: Added SSL listener
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CLEAR:PLAINTEXT,INTERNAL_SSL:SSL,SSL:SSL #SHH: Added SSL
+      KAFKA_ADVERTISED_LISTENERS: SSL://broker:9093,INTERNAL_SSL://broker:29092,CLEAR://localhost:9092 # SHH: Added SSL listeners
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL_SSL
 
       # SHH: Setup SSL. File names are relative to /etc/kafka/secrets
       KAFKA_SSL_KEYSTORE_FILENAME: broker.keystore.p12
@@ -41,7 +42,11 @@ services:
       KAFKA_SSL_KEY_CREDENTIALS: password.txt
       KAFKA_SSL_TRUSTSTORE_FILENAME: broker.truststore.p12
       KAFKA_SSL_TRUSTSTORE_CREDENTIALS: password.txt
-      KAFKA_SSL_CLIENT_AUTH: "required" # SHH: Also require mTLS.
+      KAFKA_SSL_CLIENT_AUTH: required # SHH: Also require mTLS.
+
+      # SHH: ACL
+      KAFKA_AUTHORIZER_CLASS_NAME: kafka.security.authorizer.AclAuthorizer
+      KAFKA_SUPER_USERS: User:CN=broker;User:CN=superuser
 
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1

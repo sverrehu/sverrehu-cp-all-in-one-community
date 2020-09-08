@@ -7,7 +7,7 @@ then
 fi
 
 PASS="foobar"
-USERS="broker client"
+USERS="broker client superuser"
 BAD_USER="bad"
 KEYSTORE_EXT="keystore.p12"
 TRUSTSTORE_EXT="truststore.p12"
@@ -39,6 +39,15 @@ do
 	rm ca.srl "$USER.crt" "$USER.unsigned.crt"
     fi
 done
+
+cat <<EOT > superuser.properties
+security.protocol=SSL
+ssl.keystore.location=superuser.$KEYSTORE_EXT
+ssl.keystore.password=$PASS
+ssl.key.password=$PASS
+ssl.truststore.location=superuser.$TRUSTSTORE_EXT
+ssl.truststore.password=$PASS
+EOT
 
 if test \! -f "$BAD_USER.$KEYSTORE_EXT"
 then
