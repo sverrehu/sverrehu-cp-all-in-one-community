@@ -5,5 +5,5 @@ ssl/*.crt
 ssl/*.key
 ssl/*.p12
 ssl/password.txt
-ssl/superuser.properties
+ssl/*.properties
 **/secrets/
