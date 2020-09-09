@@ -1,10 +1,10 @@
 # Confluent Community Edition with SSL and ACL
 
-*Note*: This is work in progress. Not usable at the moment.
-
 Based on the `docker-compose.yml` file in Confluent's
 [cp-all-in-one-community demo](https://github.com/confluentinc/cp-all-in-one/tree/5.5.1-post/cp-all-in-one-community)
 (provided as `docker-compose.yaml.orig` for comparison.)
+
+*Note*: This is work in progress. Not very usable at the moment.
 
 ## The `./ssl` directory
 
