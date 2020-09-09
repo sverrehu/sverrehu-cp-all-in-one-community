@@ -92,9 +92,9 @@ Added this container from the extended
 will be populated from files in `./config/ldap/ldap_users`, which is a
 trimmed-down version of the list from cp-demo.
 
-### ksqldb-server, ksqldb-cli, ksql-datagen, rest-proxy
+### ksqldb-server, ksqldb-cli, ksql-datagen, rest-proxy, connect
 
-Thes containers were removed.
+These containers were removed, since I did not need them for my testing.
 
 ## Example commands
 
