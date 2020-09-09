@@ -57,7 +57,7 @@ services:
 
       # SHH: ACL
       KAFKA_AUTHORIZER_CLASS_NAME: kafka.security.authorizer.AclAuthorizer
-      KAFKA_SUPER_USERS: User:CN=broker;User:CN=superuser
+      KAFKA_SUPER_USERS: User:CN=broker;User:CN=superuser;User:CN=schema-registry
 
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
@@ -74,6 +74,7 @@ services:
       - broker
     ports:
       - "8081:8081"
+      - "8085:8085"
     volumes:
       - ./ssl:/etc/kafka/secrets
     environment:
@@ -81,6 +82,7 @@ services:
       SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: 'zookeeper:2181'
 
       # SHH
+      SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081,https://0.0.0.0:8085
       SCHEMA_REGISTRY_KAFKASTORE_SECURITY_PROTOCOL: SSL
       SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: broker:29093
       SCHEMA_REGISTRY_KAFKASTORE_SSL_TRUSTSTORE_LOCATION: /etc/kafka/secrets/schema-registry.truststore.p12
