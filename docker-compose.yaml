@@ -8,9 +8,9 @@ services:
     ports:
       - 389:389
     environment:
-      LDAP_ORGANISATION: "Foo"
+      LDAP_ORGANISATION: "example"
       LDAP_DOMAIN: "example.com"
-      LDAP_BASE_DN: "dc=foo"
+      LDAP_BASE_DN: "dc=example,dc=com"
     volumes:
       - ./config/ldap/ldap_users:/container/service/slapd/assets/config/bootstrap/ldif/custom
     command: "--copy-service --loglevel debug"
