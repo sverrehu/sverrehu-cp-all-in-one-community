@@ -1,7 +1,10 @@
 # Confluent Community Edition with SSL and ACL
 
-Based on the docker-compose file in Confluent's
+*Note*: This is work in progress. Not usable at the moment.
+
+Based on the `docker-compose.yml` file in Confluent's
 [cp-all-in-one-community demo](https://github.com/confluentinc/cp-all-in-one/tree/5.5.1-post/cp-all-in-one-community)
+(provided as `docker-compose.yaml.orig` for comparison.)
 
 ## The `./ssl` directory
 
@@ -76,7 +79,7 @@ No changes yet.
 
 ### schema-registry
 
-No changes yet.
+No changes. Not tested.
 
 ### connect
 
