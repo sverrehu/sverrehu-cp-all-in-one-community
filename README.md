@@ -14,7 +14,7 @@ $ cd ssl
 $ ./generate.sh
 $ cd ..
 ```
-This will build a self-signed CA, and certificates for users "broker", "client",
+This will build a self-signed CA, and certificates for users "broker", "zookeeper", "client",
 "superuser" and "bad". The latter certificate is self-signed and thus unknown
 to Kafka. The others are signed by the CA created initially. For every user
 there will be three files:

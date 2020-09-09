@@ -12,7 +12,7 @@ then
 fi
 
 PASS="foobar"
-USERS="broker client superuser" # Will be signed by trusted CA
+USERS="broker zookeeper schema-registry client superuser" # Will be signed by trusted CA
 BAD_USER="bad"                  # Certificate that is not signed by the trusted CA
 KEYSTORE_EXT="keystore.p12"
 TRUSTSTORE_EXT="truststore.p12"
