@@ -88,21 +88,16 @@ No changes yet.
 
 No changes. Not tested.
 
-### ksqldb-server
+### openlap
 
-No changes. Not tested.
+Added this container from the extended
+[Confluent cp-demo](https://github.com/confluentinc/cp-demo). The directory
+will be populated from files in `./config/ldap/ldap_users`, which is a
+trimmed-down version of the list from cp-demo.
 
-### ksqldb-cli
+### ksqldb-server, ksqldb-cli, ksql-datagen, rest-proxy
 
-No changes. Not tested.
-
-### ksql-datagen
-
-No changes. Not tested.
-
-### rest-proxy
-
-No changes. Not tested.
+Thes containers were removed.
 
 ## Example commands
 
