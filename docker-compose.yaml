@@ -7,6 +7,7 @@ services:
     container_name: openldap
     ports:
       - 389:389
+      - 636:636
     environment:
       LDAP_ORGANISATION: "example"
       LDAP_DOMAIN: "example.com"
@@ -40,6 +41,7 @@ services:
       - "9093:9093" # SHH: Added SSL port
     volumes:
       - ./ssl:/etc/kafka/secrets
+      - ./extra/kafka-plain-saslserver-2-ad-2.0_0.58.jar:/usr/share/java/kafka/kafka-plain-saslserver-2-ad-2.0_0.58.jar
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
@@ -47,6 +49,11 @@ services:
       KAFKA_ADVERTISED_LISTENERS: SSL://broker:9093,INTERNAL_SSL://broker:29093,PLAINTEXT://broker:29092 # SHH: Added SSL listeners
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL_SSL
 
+      # SHH: NAV LDAP
+      KAFKA_LISTENER_NAME_SASLPLAINTEXT_PLAIN_SASL_SERVER_CALLBACK_HANDLER_CLASS: no.nav.common.security.authentication.SimpleLDAPAuthentication
+      KAFKA_LISTENER_NAME_SASLINTERNAL_PLAIN_SASL_SERVER_CALLBACK_HANDLER_CLASS: no.nav.common.security.authentication.SimpleLDAPAuthentication
+      KAFKA_AUTHORIZER_CLASS_NAME: no.nav.common.security.authorization.SimpleLDAPAuthorizer
+    
       # SHH: Setup SSL. File names are relative to /etc/kafka/secrets
       KAFKA_SSL_KEYSTORE_FILENAME: broker.keystore.p12
       KAFKA_SSL_KEYSTORE_CREDENTIALS: password.txt
