@@ -12,6 +12,7 @@ services:
       LDAP_ORGANISATION: "example"
       LDAP_DOMAIN: "example.com"
       LDAP_BASE_DN: "dc=example,dc=com"
+      LDAP_TLS_VERIFY_CLIENT: try
     volumes:
       - ./config/ldap/ldap_users:/container/service/slapd/assets/config/bootstrap/ldif/custom
     command: "--copy-service --loglevel debug"
@@ -38,22 +39,34 @@ services:
     ports:
       - "29093:29093"
       - "29092:29092"
+      - "9092:9092"
       - "9093:9093" # SHH: Added SSL port
     volumes:
       - ./ssl:/etc/kafka/secrets
+      - ./config/nav/ldapconfig.yaml:/usr/share/java/kafka/ldapconfig.yaml
+      - ./config/nav:/nav
       - ./extra/kafka-plain-saslserver-2-ad-2.0_0.58.jar:/usr/share/java/kafka/kafka-plain-saslserver-2-ad-2.0_0.58.jar
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL_SSL:SSL,SSL:SSL,PLAINTEXT:PLAINTEXT #SHH: Added SSL
-      KAFKA_ADVERTISED_LISTENERS: SSL://broker:9093,INTERNAL_SSL://broker:29093,PLAINTEXT://broker:29092 # SHH: Added SSL listeners
+      #KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL_SSL:SSL,SSL:SSL #SHH: Added SSL
+      #KAFKA_ADVERTISED_LISTENERS: SSL://broker:9093,INTERNAL_SSL://broker:29093 # SHH: Added SSL listeners
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL_SSL:SSL,SSL:SSL,PLAINTEXT:PLAINTEXT,SASLPLAINTEXT:SASL_PLAINTEXT # SHH: Added SSL
+      KAFKA_ADVERTISED_LISTENERS: SASLPLAINTEXT://broker:9092,SSL://broker:9093,INTERNAL_SSL://broker:29093,PLAINTEXT://broker:29092 # SHH: Added SSL listeners
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL_SSL
 
       # SHH: NAV LDAP
+      CLASSPATH: /nav
+      KAFKA_SASL_MECHANISM_INTER_BROKER_PROTOCOL: PLAIN
+      KAFKA_SASL_ENABLED_MECHANISMS: PLAIN
       KAFKA_LISTENER_NAME_SASLPLAINTEXT_PLAIN_SASL_SERVER_CALLBACK_HANDLER_CLASS: no.nav.common.security.authentication.SimpleLDAPAuthentication
       KAFKA_LISTENER_NAME_SASLINTERNAL_PLAIN_SASL_SERVER_CALLBACK_HANDLER_CLASS: no.nav.common.security.authentication.SimpleLDAPAuthentication
       KAFKA_AUTHORIZER_CLASS_NAME: no.nav.common.security.authorization.SimpleLDAPAuthorizer
-    
+      KAFKA_LISTENER_NAME_SASLPLAINTEXT_PLAIN_SASL_JAAS_CONFIG: |
+              org.apache.kafka.common.security.plain.PlainLoginModule required \
+              username="admin" \
+              password="admin-secret";
+
       # SHH: Setup SSL. File names are relative to /etc/kafka/secrets
       KAFKA_SSL_KEYSTORE_FILENAME: broker.keystore.p12
       KAFKA_SSL_KEYSTORE_CREDENTIALS: password.txt

@@ -1,0 +1,21 @@
+host: openldap
+port: 636
+# connectionTimout in milliseconds for LDAP
+connTimeout: 500
+# userDN is <usrUid>=<usr>,<usrBaseDN>
+# Placement of users in LDAP tree
+usrBaseDN: ou=users,dc=example,dc=com
+# User attribute for DN completion
+usrUid: cn
+# groupDN is <grpUid>=<group>,<grpBaseDN>
+# Placement of groups in LDAP tree
+grpBaseDN: ou=groups,dc=example,dc=com
+# Group attribute for DN completion
+grpUid: cn
+# Group membership is LDAP CompareRequest(groupDN, <grpAttrName>, userDN)
+# Group membership attribute name
+grpAttrName: memberuid
+# Lifetime of user entry in cache after cache-write - IN MINUTES
+usrCacheExpire: 2
+# Lifetime of group entry in cache after cache-write - IN MINUTES
+grpCacheExpire: 4
