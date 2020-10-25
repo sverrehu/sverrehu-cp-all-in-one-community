@@ -45,23 +45,32 @@ services:
       - ./ssl:/etc/kafka/secrets
       - ./config/nav/ldapconfig.yaml:/usr/share/java/kafka/ldapconfig.yaml
       - ./config/nav:/nav
-      - ./extra/kafka-plain-saslserver-2-ad-2.0_0.58.jar:/usr/share/java/kafka/kafka-plain-saslserver-2-ad-2.0_0.58.jar
+#      - ./extra/kafka-plain-saslserver-2-ad-2.0_0.58.jar:/usr/share/java/kafka/kafka-plain-saslserver-2-ad-2.0_0.58.jar
+      - ./extra/ldap-testbed-1.0-SNAPSHOT.jar:/usr/share/java/kafka/ldap-testbed-1.0-SNAPSHOT.jar
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
-      #KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL_SSL:SSL,SSL:SSL #SHH: Added SSL
-      #KAFKA_ADVERTISED_LISTENERS: SSL://broker:9093,INTERNAL_SSL://broker:29093 # SHH: Added SSL listeners
+      # KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL_SSL:SSL,SSL:SSL  #SHH: Added SSL
+      # KAFKA_ADVERTISED_LISTENERS: SSL://broker:9093,INTERNAL_SSL://broker:29093 # SHH: Added SSL listeners
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL_SSL:SSL,SSL:SSL,PLAINTEXT:PLAINTEXT,SASLPLAINTEXT:SASL_PLAINTEXT # SHH: Added SSL
       KAFKA_ADVERTISED_LISTENERS: SASLPLAINTEXT://broker:9092,SSL://broker:9093,INTERNAL_SSL://broker:29093,PLAINTEXT://broker:29092 # SHH: Added SSL listeners
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL_SSL
 
       # SHH: NAV LDAP
-      CLASSPATH: /nav
       KAFKA_SASL_MECHANISM_INTER_BROKER_PROTOCOL: PLAIN
       KAFKA_SASL_ENABLED_MECHANISMS: PLAIN
-      KAFKA_LISTENER_NAME_SASLPLAINTEXT_PLAIN_SASL_SERVER_CALLBACK_HANDLER_CLASS: no.nav.common.security.authentication.SimpleLDAPAuthentication
-      KAFKA_LISTENER_NAME_SASLINTERNAL_PLAIN_SASL_SERVER_CALLBACK_HANDLER_CLASS: no.nav.common.security.authentication.SimpleLDAPAuthentication
-      KAFKA_AUTHORIZER_CLASS_NAME: no.nav.common.security.authorization.SimpleLDAPAuthorizer
+      # KAFKA_LISTENER_NAME_SASLPLAINTEXT_PLAIN_SASL_SERVER_CALLBACK_HANDLER_CLASS: no.nav.common.security.authentication.SimpleLDAPAuthentication
+      # KAFKA_LISTENER_NAME_SASLINTERNAL_PLAIN_SASL_SERVER_CALLBACK_HANDLER_CLASS: no.nav.common.security.authentication.SimpleLDAPAuthentication
+      # KAFKA_AUTHORIZER_CLASS_NAME: no.nav.common.security.authorization.SimpleLDAPAuthorizer
+
+      # SHH: Our implementation
+      KAFKA_LISTENER_NAME_SASLPLAINTEXT_PLAIN_SASL_SERVER_CALLBACK_HANDLER_CLASS: no.shhsoft.kafka.auth.LdapAuthenticateCallbackHandler
+      KAFKA_LISTENER_NAME_SASLINTERNAL_PLAIN_SASL_SERVER_CALLBACK_HANDLER_CLASS: no.shhsoft.kafka.auth.LdapAuthenticateCallbackHandler
+      KAFKA_AUTHN_LDAP_HOST: openldap
+      KAFKA_AUTHN_LDAP_PORT: 389
+      KAFKA_AUTHN_LDAP_BASE_DN: dc=example,dc=com
+      KAFKA_AUTHN_LDAP_USERNAME_TO_DN_FORMAT: "cn=%s,ou=users,dc=example,dc=com"
+      
       KAFKA_LISTENER_NAME_SASLPLAINTEXT_PLAIN_SASL_JAAS_CONFIG: |
               org.apache.kafka.common.security.plain.PlainLoginModule required \
               username="admin" \
